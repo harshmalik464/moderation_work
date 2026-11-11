@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trust Operations Desk — Enterprise</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--b0:#060B18;--b1:#0A1224;--b2:#0F1B33;--b3:#14213E;--p1:#121E38;--p2:#172540;--bd:#1D2E4F;--bd2:#23365E;--t1:#E8EEF9;--t2:#92A0BD;--t3:#67789B;--cy:#22D3EE;--bl:#3B82F6;--am:#F59E0B;--gn:#10B981;--rd:#EF4444;--pu:#8B5CF6;--sh:0 4px 24px rgba(0,0,0,.35)}
+html,body{height:100%;background:var(--b0);color:var(--t1);font:13px/1.5 Inter,Segoe UI,system-ui,sans-serif;overflow:hidden}
+button,input,select,textarea{font:inherit}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#24365c;border-radius:99px}::-webkit-scrollbar-track{background:transparent}
+.app{display:flex;height:100vh;width:100vw;background:radial-gradient(1200px 600px at 20% -10%,#122040 0%,transparent 60%),linear-gradient(180deg,var(--b1),var(--b0))}
+/* SIDEBAR */
+.side{width:246px;min-width:246px;background:linear-gradient(180deg,#080F22,#070D1D);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+.s-head{height:52px;display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.logo{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#22D3EE,#3B82F6);display:grid;place-items:center;color:#001018;font-weight:800;font-size:14px}
+.s-title{font-weight:800;letter-spacing:.4px;font-size:12px;line-height:1}
+.s-sub{font-size:10px;color:var(--t3);letter-spacing:.5px;text-transform:uppercase}
+.s-nav{flex:1;overflow-y:auto;padding:10px}
+.s-sec{font-size:10px;letter-spacing:.8px;color:var(--t3);text-transform:uppercase;padding:10px 8px 6px;font-weight:700}
+.nav-btn{width:100%;display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid transparent;color:var(--t2);background:transparent;cursor:pointer;text-align:left;transition:.15s;font-size:12.5px;margin-bottom:2px}
+.nav-btn:hover{background:rgba(59,130,246,.08);color:var(--t1);border-color:rgba(59,130,246,.15)}
+.nav-btn.active{background:linear-gradient(180deg,#1A2E55,#162544);color:var(--t1);border-color:#2A4070;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.nav-btn .ico{width:18px;height:18px;display:grid;place-items:center;flex-shrink:0;opacity:.9}
+.nav-btn .badge{margin-left:auto;background:var(--b3);border:1px solid var(--bd2);padding:1px 7px;border-radius:99px;font-size:10px;color:var(--t2);font-weight:700}
+.nav-btn.active .badge{background:var(--b2);color:var(--cy);border-color:rgba(34,211,238,.3)}
+.s-foot{border-top:1px solid var(--bd);padding:10px;display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.s-foot-card{background:var(--p1);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.s-foot-label{font-size:10px;color:var(--t3);letter-spacing:.6px;text-transform:uppercase;font-weight:700}
+.s-foot-val{font-size:11px;color:var(--t2);margin-top:2px}
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.top{height:52px;background:rgba(10,18,36,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;padding:0 14px;flex-shrink:0}
+.top-search{flex:1;max-width:420px;position:relative}
+.top-search input{width:100%;background:var(--b2);border:1px solid var(--bd);border-radius:9px;padding:8px 10px 8px 34px;color:var(--t1);outline:none;font-size:12.5px}
+.top-search input::placeholder{color:var(--t3)}
+.top-search span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--t3)}
+.kbd{font-size:10px;border:1px solid var(--bd2);background:var(--p2);padding:2px 6px;border-radius:5px;color:var(--t3)}
+.chip{display:flex;align-items:center;gap:8px;background:var(--p1);border:1px solid var(--bd);border-radius:99px;padding:5px 10px;font-size:11px;color:var(--t2);white-space:nowrap}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--gn);box-shadow:0 0 8px var(--gn);animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.5}}
+.icon-btn{width:34px;height:34px;border-radius:8px;background:var(--p1);border:1px solid var(--bd);display:grid;place-items:center;color:var(--t2);cursor:pointer;position:relative}
+.icon-btn:hover{color:var(--t1);border-color:var(--bd2)}
+.noti-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--rd);border-radius:50%;border:2px solid var(--p1)}
+.avatar{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#3B82F6,#22D3EE);display:grid;place-items:center;font-weight:800;color:#001018;font-size:11px}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;background:transparent}
+/* OVERVIEW */
+.view{padding:14px 16px;display:none}
+.view.active{display:block}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.metric{background:linear-gradient(180deg,rgba(18,30,56,.95),rgba(12,22,42,.95));border:1px solid var(--bd);border-radius:12px;padding:12px;position:relative;overflow:hidden}
+.metric:after{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(59,130,246,.25),transparent)}
+.m-head{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.m-val{font-size:20px;font-weight:800;margin:6px 0 2px;letter-spacing:-.5px}
+.m-sub{font-size:11px;color:var(--t3)}
+.badge-sm{font-size:10px;padding:2px 7px;border-radius:99px;border:1px solid var(--bd);background:var(--b2);color:var(--t2);font-weight:700}
+.badge-sm.up{color:var(--gn);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.1)}
+.badge-sm.down{color:var(--am);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.1)}
+.panel{background:linear-gradient(180deg,var(--p1),#0F1B33);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.p-head{height:40px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid var(--bd);font-weight:700;font-size:12px;letter-spacing:.2px;background:rgba(0,0,0,.15);position:sticky;top:0;z-index:1;backdrop-filter:blur(6px)}
+.p-body{padding:12px}
+.row{display:flex;gap:10px;margin-top:10px}
+.row> *{flex:1;min-width:0}
+/* QUEUE LAYOUT */
+.queue-layout{display:flex;gap:10px;height:calc(100vh - 52px - 28px)}
+.q-left{width:420px;min-width:320px;background:var(--p1);border:1px solid var(--bd);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+.q-head{height:44px;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid var(--bd);background:rgba(0,0,0,.15);flex-shrink:0}
+.q-filters{padding:8px 10px;border-bottom:1px solid var(--bd);display:flex;gap:6px;flex-wrap:wrap;background:var(--b1)}
+.q-list{flex:1;overflow-y:auto;padding:6px;display:flex;flex-direction:column;gap:6px}
+.case-card{background:linear-gradient(180deg,#13203E,#0F1B33);border:1px solid var(--bd);border-radius:10px;padding:10px;cursor:pointer;transition:.12s}
+.case-card:hover{border-color:#2A4A7A;transform:translateY(-1px)}
+.case-card.sel{border-color:var(--bl);box-shadow:0 0 0 1px rgba(59,130,246,.35),0 6px 18px rgba(0,0,0,.25);background:linear-gradient(180deg,#1A2E5A,#122040)}
+.c-top{display:flex;align-items:center;gap:8px;font-size:11px}
+.c-id{font-weight:800;letter-spacing:.3px}
+.prio{font-size:10px;font-weight:800;padding:2px 6px;border-radius:99px;border:1px solid;letter-spacing:.4px}
+.prio.Critical{background:rgba(239,68,68,.15);color:#FCA5A5;border-color:rgba(239,68,68,.35)}
+.prio.High{background:rgba(245,158,11,.14);color:#FDE68A;border-color:rgba(245,158,11,.35)}
+.prio.Medium{background:rgba(59,130,246,.14);color:#93C5FD;border-color:rgba(59,130,246,.35)}
+.prio.Low{background:rgba(148,163,184,.12);color:#CBD5E1;border-color:rgba(148,163,184,.25)}
+.risk{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:10px;color:var(--t3)}
+.riskbar{width:48px;height:4px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.riskfill{height:100%;border-radius:99px}
+.c-meta{display:flex;gap:10px;margin-top:6px;font-size:11px;color:var(--t3)}
+.c-text{margin-top:6px;font-size:12px;color:var(--t1);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.c-foot{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11px;color:var(--t2)}
+.dot-s{width:8px;height:8px;border-radius:50%}
+.q-right{flex:1;min-width:0;background:var(--p1);border:1px solid var(--bd);border-radius:12px;display:flex;flex-direction:column;overflow:hidden}
+.tabs{height:38px;display:flex;gap:6px;padding:6px 10px;border-bottom:1px solid var(--bd);background:rgba(0,0,0,.12);align-items:center}
+.tab{padding:6px 10px;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--t3);cursor:pointer;font-size:12px;font-weight:700}
+.tab.active{background:var(--b3);color:var(--t1);border-color:var(--bd2)}
+.qr-scroll{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:12px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv-item{background:var(--b1);border:1px solid var(--bd);border-radius:10px;padding:10px}
+.kv-k{font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);font-weight:700}
+.kv-v{margin-top:4px;font-size:12px;color:var(--t1);font-weight:600;word-break:break-word}
+.quote{background:var(--b1);border:1px solid var(--bd);border-left:3px solid var(--bl);border-radius:10px;padding:12px;font-size:12.5px;line-height:1.6;color:var(--t1)}
+.timeline{position:relative;padding-left:16px}
+.timeline:before{content:"";position:absolute;left:5px;top:4px;bottom:4px;width:2px;background:linear-gradient(var(--bd),transparent)}
+.tl-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.06)}
+.tl-item:last-child{border:none}
+.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--bl);border:2px solid var(--b2);flex-shrink:0;margin-top:2px}
+.decision-bar{position:sticky;bottom:0;display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:linear-gradient(180deg,transparent,rgba(6,11,24,.96) 18%);border-top:1px solid var(--bd);backdrop-filter:blur(8px)}
+.btn{padding:8px 12px;border-radius:8px;border:1px solid var(--bd2);background:var(--b2);color:var(--t1);cursor:pointer;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{filter:brightness(1.1)}
+.btn.primary{background:linear-gradient(180deg,#2563EB,#1D4ED8);border-color:#3B82F6;color:#fff}
+.btn.success{background:linear-gradient(180deg,#059669,#047857);border-color:#10B981;color:#fff}
+.btn.danger{background:linear-gradient(180deg,#DC2626,#B91C1C);border-color:#EF4444;color:#fff}
+.btn.warn{background:linear-gradient(180deg,#D97706,#B45309);border-color:#F59E0B;color:#fff}
+.btn.ghost{background:transparent}
+.input,select,textarea{width:100%;background:var(--b1);border:1px solid var(--bd);border-radius:8px;padding:8px 10px;color:var(--t1);outline:none}
+textarea{resize:vertical;min-height:70px}
+.label{font-size:11px;color:var(--t2);font-weight:700;margin:8px 0 4px;display:block}
+.table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+.table th{font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--t3);text-align:left;padding:8px 10px;border-bottom:1px solid var(--bd);background:rgba(0,0,0,.2);position:sticky;top:0}
+.table td{padding:10px;border-bottom:1px solid rgba(29,46,79,.7)}
+.table tr:hover td{background:rgba(59,130,246,.06)}
+.canvas-wrap{background:var(--b1);border:1px solid var(--bd);border-radius:10px;padding:10px;min-height:170px;display:flex;flex-direction:column}
+.canvas-wrap canvas{width:100%;display:block}
+.modal{position:fixed;inset:0;background:rgba(3,7,18,.65);backdrop-filter:blur(4px);display:none;place-items:center;z-index:50;padding:16px}
+.modal.open{display:grid}
+.dialog{width:min(560px,96vw);background:linear-gradient(180deg,#14213E,#0E1A33);border:1px solid var(--bd2);border-radius:14px;overflow:hidden;max-height:90vh;display:flex;flex-direction:column}
+.d-head{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--bd);font-weight:800}
+.d-body{padding:14px;overflow:auto}
+.d-foot{padding:12px 14px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;background:rgba(0,0,0,.15)}
+.toast-stack{position:fixed;top:60px;right:12px;z-index:60;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{min-width:280px;max-width:360px;background:#0F1D33;border:1px solid var(--bd2);border-radius:10px;padding:10px 12px;display:flex;gap:10px;box-shadow:var(--sh);pointer-events:auto}
+.noti-panel{position:absolute;top:52px;right:10px;width:380px;max-height:70vh;background:var(--p1);border:1px solid var(--bd2);border-radius:12px;box-shadow:var(--sh);display:none;overflow:hidden;z-index:20}
+.noti-panel.open{display:flex;flex-direction:column}
+.burger{display:none;width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:var(--p1);color:var(--t1);place-items:center;cursor:pointer}
+@media(max-width:1100px){
+ .side{position:fixed;left:0;top:0;bottom:0;z-index:40;transform:translateX(-100%);transition:.2s}
+ .side.open{transform:none}
+ .burger{display:grid}
+ .grid4{grid-template-columns:repeat(2,1fr)}
+ .grid3{grid-template-columns:1fr}
+ .queue-layout{flex-direction:column;height:auto}
+ .q-left{width:100%;min-width:0;max-height:50vh}
+ .row{flex-direction:column}
+ .top-search{max-width:200px}
+}
+@media(max-width:1366px) and (min-width:1101px){
+ .grid4{grid-template-columns:repeat(4,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside class="side" id="side">
+  <div class="s-head">
+   <div class="logo">◈</div>
+   <div><div class="s-title">TRUST OPERATIONS DESK</div><div class="s-sub">Enterprise Safety Suite</div></div>
+   <button class="icon-btn" style="margin-left:auto" onclick="toggleSide()">✕</button>
+  </div>
+  <div class="s-nav">
+   <div class="s-sec">Workspace</div>
+   <button class="nav-btn active" data-v="overview" onclick="nav('overview')"><span class="ico">◧</span> Overview <span class="badge" id="bd-all">0</span></button>
+   <button class="nav-btn" data-v="queue" onclick="nav('queue')"><span class="ico">≡</span> Review Queue <span class="badge" id="bd-pend">0</span></button>
+   <button class="nav-btn" data-v="assigned" onclick="nav('assigned')"><span class="ico">◎</span> My Assigned <span class="badge" id="bd-mine">0</span></button>
+   <button class="nav-btn" data-v="escalations" onclick="nav('escalations')"><span class="ico">⚑</span> Escalations <span class="badge" id="bd-esc">0</span></button>
+   <button class="nav-btn" data-v="priority" onclick="nav('priority')"><span class="ico">◆</span> Priority Cases <span class="badge" id="bd-pri">0</span></button>
+   <div class="s-sec">Operations</div>
+   <button class="nav-btn" data-v="history" onclick="nav('history')"><span class="ico">↺</span> Decision History</button>
+   <button class="nav-btn" data-v="analytics" onclick="nav('analytics')"><span class="ico">▦</span> Performance Analytics</button>
+   <button class="nav-btn" data-v="correspondence" onclick="nav('correspondence')"><span class="ico">✉</span> Correspondence</button>
+   <button class="nav-btn" data-v="policy" onclick="nav('policy')"><span class="ico">⧉</span> Policy Centre</button>
+   <button class="nav-btn" data-v="settings" onclick="nav('settings')"><span class="ico">⚙</span> Settings</button>
+  </div>
+  <div class="s-foot">
+   <div class="s-foot-card">
+    <div class="s-foot-label">Live Ingest</div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+     <button class="btn" style="flex:1" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+     <button class="btn primary" style="flex:1" onclick="genOne(true)">＋ New</button>
+    </div>
+    <div class="s-foot-val" id="nextIn">Next case in ~ 04:22</div>
+    <div style="height:6px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin-top:6px"><div id="nextBar" style="height:100%;width:35%;background:linear-gradient(90deg,var(--cy),var(--bl))"></div></div>
+   </div>
+   <div style="display:flex;gap:6px">
+    <button class="btn" style="flex:1" onclick="exportCSV()">⤓ Export CSV</button>
+    <button class="btn" style="flex:1" onclick="resetData()">Reset</button>
+   </div>
+   <div class="s-foot-val">Operator: <b style="color:var(--t1)">A. Sharma</b> • TID-Ops-8471</div>
+  </div>
+ </aside>
+
+ <div class="main">
+  <div class="top">
+   <button class="burger" onclick="toggleSide()">☰</button>
+   <div class="top-search"><span>⌕</span><input id="globalSearch" placeholder="Search case ID, user, content, category… ( / )" oninput="onSearch(this.value)"></div>
+   <div class="kbd">/</div>
+   <div class="chip"><span class="dot" id="liveDot"></span> <span id="liveTxt">Live</span> • <span id="clock">—</span></div>
+   <button class="icon-btn" onclick="toggleNoti()">🔔<span class="noti-dot" id="notiDot"></span></button>
+   <div class="chip" style="gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:var(--am)"></span> Operational • SLA 4h</div>
+   <div style="display:flex;align-items:center;gap:8px;margin-left:4px"><div style="text-align:right;line-height:1"><div style="font-weight:800;font-size:12px">A. Sharma</div><div style="font-size:10px;color:var(--t3)">Senior Reviewer</div></div><div class="avatar">AS</div></div>
+   <div class="noti-panel" id="notiPanel">
+    <div class="p-head">Notifications <button class="btn ghost" style="margin-left:auto" onclick="clearNoti()">Clear</button><button class="btn ghost" onclick="toggleNoti()">✕</button></div>
+    <div id="notiList" style="overflow:auto;max-height:60vh"></div>
+   </div>
+  </div>
+
+  <div class="content" id="content">
+   <!-- OVERVIEW -->
+   <div class="view active" id="v-overview">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px;letter-spacing:.3px">Operational Overview</h2><span class="badge-sm">TRUST-OPS-CENTRAL</span><span class="badge-sm up">System nominal</span><button class="btn" style="margin-left:auto" onclick="nav('queue')">Open Queue →</button></div>
+    <div class="grid4" id="metrics"></div>
+    <div class="row">
+     <div class="panel"><div class="p-head">Daily Review Volume <span class="badge-sm">Last 7 days</span></div><div class="p-body"><div class="canvas-wrap"><canvas id="cDaily" height="160"></canvas></div><div id="miniTrend" style="margin-top:8px;font-size:11px;color:var(--t3)"></div></div></div>
+     <div class="panel"><div class="p-head">Decisions by Category <button class="btn ghost" onclick="nav('analytics')">Details</button></div><div class="p-body"><div class="canvas-wrap"><canvas id="cDonut" height="160"></canvas></div></div></div>
+    </div>
+    <div class="row">
+     <div class="panel" style="flex:1.6"><div class="p-head">Queue Snapshot • <span id="snapCount" class="badge-sm">0 pending</span><button class="btn ghost" onclick="nav('queue')">Manage</button></div><div class="p-body" style="padding:0"><table class="table"><thead><tr><th>Case</th><th>Category</th><th>Priority</th><th>Risk</th><th>Age</th><th>Status</th></tr></thead><tbody id="snapBody"></tbody></table></div></div>
+     <div class="panel" style="flex:1"><div class="p-head">Activity Timeline</div><div class="p-body"><div id="activityOverview" class="timeline"></div></div></div>
+    </div>
+   </div>
+
+   <!-- QUEUE -->
+   <div class="view" id="v-queue">
+    <div class="queue-layout">
+     <div class="q-left">
+      <div class="q-head"><b style="font-size:12px">Incoming Queue</b><span class="badge-sm" id="qCount">0</span><button class="btn ghost" style="margin-left:auto" onclick="togglePause()" id="pauseBtn2">⏸</button><select class="input" style="width:120px;padding:6px" id="sortSel" onchange="renderQueue()"><option value="newest">Newest first</option><option value="priority">Priority</option><option value="risk">Highest risk</option><option value="oldest">Oldest</option></select></div>
+      <div class="q-filters">
+       <select id="fStatus" class="input" style="padding:6px;font-size:11px"><option value="">All statuses</option><option>pending</option><option>assigned</option><option>under_review</option><option>escalated</option><option>approved</option><option>removed</option><option>resolved</option></select>
+       <select id="fPrio" class="input" style="padding:6px;font-size:11px"><option value="">All priorities</option><option>Critical</option><option>High</option><option>Medium</option><option>Low</option></select>
+       <select id="fCat" class="input" style="padding:6px;font-size:11px"><option value="">All categories</option></select>
+       <button class="btn ghost" onclick="clearFilters()">Clear</button>
+      </div>
+      <div class="q-list" id="qList"></div>
+     </div>
+     <div class="q-right">
+      <div class="tabs">
+       <button class="tab active" data-t="details" onclick="switchTab('details')">Investigation</button>
+       <button class="tab" data-t="meta" onclick="switchTab('meta')">Metadata</button>
+       <button class="tab" data-t="timeline" onclick="switchTab('timeline')">Timeline</button>
+       <button class="tab" data-t="notes" onclick="switchTab('notes')">Notes</button>
+       <div style="margin-left:auto;display:flex;gap:6px"><button class="btn ghost" onclick="openPolicyForCase()">Policy</button><button class="btn ghost" onclick="copyCase()">⧉ Copy</button></div>
+      </div>
+      <div class="qr-scroll" id="caseDetail"></div>
+      <div class="decision-bar" id="decisionBar"></div>
+     </div>
+    </div>
+   </div>
+
+   <!-- ASSIGNED -->
+   <div class="view" id="v-assigned"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px">My Assigned Cases</h2><span class="badge-sm" id="assignedCount">0</span><button class="btn ghost" style="margin-left:auto" onclick="nav('queue')">Go to Queue</button></div><div class="panel"><div class="p-body" style="padding:0"><table class="table"><thead><tr><th>Case ID</th><th>User</th><th>Category</th><th>Priority</th><th>Risk</th><th>Status</th><th></th></tr></thead><tbody id="assignedBody"></tbody></table></div></div></div>
+   <div class="view" id="v-escalations"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px">Escalations</h2><span class="badge-sm" id="escCount">0 escalated</span></div><div class="panel"><div class="p-body" style="padding:0"><table class="table"><thead><tr><th>Case</th><th>Category</th><th>Escalation Reason</th><th>Priority</th><th>Age</th><th>Assignee</th><th></th></tr></thead><tbody id="escBody"></tbody></table></div></div></div>
+   <div class="view" id="v-priority"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px">Priority Cases</h2><span class="badge-sm down" id="priCount">0</span></div><div id="priGrid" class="grid3"></div></div>
+   <div class="view" id="v-history"><div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px">Decision History</h2><button class="btn ghost" style="margin-left:auto" onclick="exportCSV()">Export CSV</button></div><div class="panel"><div class="p-head"><input id="histSearch" class="input" style="max-width:300px;padding:6px" placeholder="Filter history…" oninput="renderHistory()"><select id="histFilter" class="input" style="width:160px;padding:6px" onchange="renderHistory()"><option value="">All decisions</option><option>approved</option><option>removed</option><option>warned</option><option>restricted</option><option>escalated</option><option>resolved</option></select></div><div class="p-body" style="padding:0"><table class="table"><thead><tr><th>Time</th><th>Case</th><th>Category</th><th>Decision</th><th>Rationale</th><th>Reviewer</th></tr></thead><tbody id="histBody"></tbody></table></div></div></div>
+
+   <div class="view" id="v-analytics">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px">Performance Analytics</h2><span class="badge-sm">Calculated from local records</span><button class="btn ghost" style="margin-left:auto" onclick="resetCharts()">⟳ Refresh</button></div>
+    <div class="grid4" id="analyticsMetrics"></div>
+    <div class="row"><div class="panel"><div class="p-head">Queue Trends (14 days)</div><div class="p-body"><div class="canvas-wrap"><canvas id="cTrends" height="170"></canvas></div></div></div><div class="panel"><div class="p-head">Escalation Trend</div><div class="p-body"><div class="canvas-wrap"><canvas id="cEsc" height="170"></canvas></div></div></div></div>
+    <div class="panel" style="margin-top:10px"><div class="p-head">Reviewer Performance (local only)</div><div class="p-body"><table class="table"><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody id="perfBody"></tbody></table><div style="margin-top:8px;font-size:11px;color:var(--t3)">All analytics are derived from fictional records generated in this browser. No real employee data is represented.</div></div></div>
+   </div>
+
+   <div class="view" id="v-correspondence">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px">Correspondence</h2><span class="badge-sm">Internal</span></div>
+    <div class="row">
+     <div class="panel" style="flex:1"><div class="p-head">Compose</div><div class="p-body">
+      <label class="label">Linked Case</label><select id="mailCase" class="input" onchange="genMail()"></select>
+      <label class="label">Template</label><select id="mailTpl" class="input" onchange="genMail()"><option value="review">Case Review Update</option><option value="escalation">Escalation Notice</option><option value="appeal">Appeal Response</option><option value="warning">Warning Notification Draft</option></select>
+      <label class="label">To</label><input id="mailTo" class="input" placeholder="safety-team@example.internal">
+      <label class="label">Subject</label><input id="mailSub" class="input" placeholder="Subject">
+      <label class="label">Message</label><textarea id="mailBody" rows="10" placeholder="Message body…"></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px"><button class="btn primary" onclick="saveDraft()">Save Draft</button><button class="btn" onclick="copyMail()">Copy</button><button class="btn" onclick="openMail()">Open in mail client</button></div>
+      <div id="drafts" style="margin-top:10px"></div>
+     </div></div>
+     <div class="panel" style="flex:1"><div class="p-head">Email Preview</div><div class="p-body"><div id="mailPrev" style="white-space:pre-wrap;font-size:12px;line-height:1.6;background:var(--b1);border:1px solid var(--bd);border-radius:10px;padding:12px;min-height:300px"></div></div></div>
+    </div>
+   </div>
+
+   <div class="view" id="v-policy">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><h2 style="font-size:14px">Policy Centre</h2><input id="policySearch" class="input" style="max-width:360px;margin-left:auto" placeholder="Search policies…" oninput="renderPolicies()"></div>
+    <div id="policyGrid" class="grid3"></div>
+    <div class="panel" id="policyDetail" style="display:none;margin-top:10px"></div>
+   </div>
+
+   <div class="view" id="v-settings">
+    <div style="max-width:860px">
+     <h2 style="font-size:14px;margin-bottom:8px">Settings & About</h2>
+     <div class="panel"><div class="p-head">Persistence</div><div class="p-body"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn success" onclick="saveNow()">Save to localStorage</button><button class="btn danger" onclick="resetData()">Reset Application Data</button><button class="btn" onclick="exportCSV()">Export Cases CSV</button><button class="btn" onclick="seedMore()">Generate 10 cases</button></div><div style="margin-top:8px;font-size:11px;color:var(--t3)">State persists automatically via localStorage key <code>trust_ops_v2</code>. Refresh to verify.</div></div></div>
+     <div class="panel" style="margin-top:10px"><div class="p-head">Queue Injest Settings</div><div class="p-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div><label class="label">Minimum interval (minutes)</label><input id="setMin" type="number" min="0.1" step="0.5" class="input"><label class="label">Maximum interval (minutes)</label><input id="setMax" type="number" min="0.5" step="0.5" class="input"></div>
+      <div><label class="label">Operator name</label><input id="setName" class="input"><label class="label">Sound alerts</label><select id="setSound" class="input"><option value="off">Off</option><option value="on">On (beep)</option></select><button class="btn primary" style="margin-top:10px" onclick="saveSettings()">Save Settings</button></div>
+     </div></div>
+     <div class="panel" style="margin-top:10px"><div class="p-head">Keyboard Shortcuts</div><div class="p-body" style="font-size:12px;line-height:1.8;color:var(--t2)">
+      <b style="color:var(--t1)">/</b> focus search • <b style="color:var(--t1)">J/K</b> next/prev case • <b style="color:var(--t1)">A</b> approve • <b style="color:var(--t1)">R</b> remove • <b style="color:var(--t1)">W</b> warn • <b style="color:var(--t1)">E</b> escalate • <b style="color:var(--t1)">N</b> add note • <b style="color:var(--t1)">P</b> pause ingest
+     </div></div>
+     <div class="panel" style="margin-top:10px"><div class="p-head">About</div><div class="p-body" style="font-size:12px;color:var(--t2);line-height:1.7">
+      <b style="color:var(--t1)">Trust Operations Desk</b> — a fictional, self-contained content moderation workbench for training and prototyping. It operates independently in your browser, is not connected to any live platform, and contains only synthetic records. No real user data is used.<br><br>Build: Enterprise Dark v2 • Local-only • © 2026
+     </div></div>
+    </div>
+   </div>
+
+  </div>
+ </div>
+</div>
+
+<div class="modal" id="modal"><div class="dialog"><div class="d-head"><span id="modalTitle">Action</span><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="d-body" id="modalBody"></div><div class="d-foot" id="modalFoot"></div></div></div>
+<div class="toast-stack" id="toasts"></div>
+
+<script>
+const LS_KEY='trust_ops_v2';
+const CATS=['Harassment','Hate speech','Spam','Scams','Threats','Violence','Sexual content','Misinformation','Impersonation','Self-harm concerns','Child safety concerns','Benign content'];
+const CAT_COLOR={Harassment:'#F59E0B','Hate speech':'#EF4444',Spam:'#64748B',Scams:'#F97316',Threats:'#DC2626',Violence:'#991B1B','Sexual content':'#EC4899',Misinformation:'#8B5CF6',Impersonation:'#0EA5E9','Self-harm concerns':'#F43F5E','Child safety concerns':'#7C2D12','Benign content':'#10B981'};
+const PRIO_ORDER={Critical:4,High:3,Medium:2,Low:1};
+const NAMES=[['Maya','Rao'],['Jonah','Keller'],['Sana','Iqbal'],['Leo','Park'],['Aisha','Khan'],['Diego','Morales'],['Priya','Nair'],['Noah','Bennett'],['Zara','Hussain'],['Ethan','Cole'],['Lina','Schmidt'],['Omar','Farouk'],['Chloe','Anders'],['Arjun','Mehta'],['Sofia','Lindgren'],['Kenji','Tanaka'],['Amara','Okoro'],['Felix','Muller']];
+const USERNAMES=['quiet_echo','river_walker','nova_lens','midnight_atlas','sunlit_path','veridian_owl','amber_field','north_sparrow','cobalt_drift','echo_frame','lumen_park','paper_comet','violet_orbit','harbor_light','thistle_road'];
+const CONTENT_TEMPLATES={
+ 'Harassment':["Repeatedly tagging @user with insulting messages telling them to leave the platform. (redacted)","Comment thread with coordinated mockery targeting user's appearance. Multiple replies.","DM excerpt: 'You should quit. No one wants you here.' Flagged for harassment."],
+ 'Hate speech':["Post containing demeaning language targeting a protected characteristics group (content redacted for review).","Image caption with slur-related hate directed at religious community — text flagged by classifier.","Comment: 'People like [protected group] should not be allowed...' — flagged hate."],
+ 'Spam':["Identical promotional link posted across 12 threads: 'Earn $500/day quick!'","Bulk comments: 'Check my profile for free followers!!!' repeated 30x.","Post: 'LIMITED OFFER!!! Click http://example.invalid/gift' — suspected spam."],
+ 'Scams':["User claims to be support staff requesting account verification via external link.","DM: 'You've won a prize! Send your bank details to claim.'","Listing: counterfeit branded goods sold as authentic with fake reviews."],
+ 'Threats':["Comment: 'I will find you where you live and [threat redacted]' — imminent threat flag.","Post: 'If I see you at school tomorrow, you'll regret it.' User is minor per reporter.","Threatening image caption implying physical harm to named individual."],
+ 'Violence':["Video description depicting graphic fight in public place; no warning filter.","Post praising violent act with detailed instructions (redacted).","Livestream clip showing assault; reporter requests removal under violence policy."],
+ 'Sexual content':["Explicit image posted without consent flag; subject requests takedown.","Comment soliciting sexual content from minor — immediately flagged.","Post with pornographic description in public feed violating sexual content policy."],
+ 'Misinformation':["Post: 'Vaccines contain microchips that track location' — health misinformation claim.","Edited video falsely showing election officials discarding ballots — fact-check flagged.","Claim: 'City water supply poisoned — do not drink' — no official source, viral."],
+ 'Impersonation':["Account impersonating public figure @verified_handle with identical bio and avatar.","Profile using another user's photos and name, posting as them.","Brand impersonation: fake support account replying to customers."],
+ 'Self-harm concerns':["Post: 'I don't want to keep going, nothing helps anymore.' User expressing distress.","Comment indicating intent to self-harm with method mentioned (redacted). Referral needed.","Note: user previously posted similar content; welfare check requested."],
+ 'Child safety concerns':["Image description flagged as sexualization of minor — urgent secondary review required.","Comment sexualizing minor participant in video — zero tolerance policy.","Account soliciting contact with minors in comments — immediate escalation."],
+ 'Benign content':["Travel photo with friendly caption about mountain hike. No violation detected.","Discussion thread about book recommendations with civil disagreement.","User sharing recipe video with community tips. Appears benign."]
+};
+const REPORT_REASONS={Harassment:'Targeted harassment', 'Hate speech':'Hate or slur',Spam:'Repetitive spam',Scams:'Fraud / scam',Threats:'Credible threat',Violence:'Graphic violence','Sexual content':'Non-consensual / explicit',Misinformation:'False claim',Impersonation:'Impersonation','Self-harm concerns':'Self-harm risk','Child safety concerns':'Child safety','Benign content':'Mistaken report'};
+let state={cases:[],selectedId:null,view:'overview',livePaused:false,notis:[],drafts:[],settings:{minM:3,maxM:8,sound:'off',opName:'A. Sharma'},currentTab:'details'};
+let ingestTimer=null,nextDeadline=0,nextTick=null;
+const byId=id=>state.cases.find(c=>c.id===id);
+function uid(prefix){return prefix+'-'+Math.random().toString(36).slice(2,7).toUpperCase()+'-'+Math.floor(1000+Math.random()*9000)}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function fmtTime(d){const x=new Date(d);return x.toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}
+function ageStr(d){const m=Math.floor((Date.now()-new Date(d))/60000);if(m<60)return m+'m ago';if(m<1440)return Math.floor(m/60)+'h ago';return Math.floor(m/1440)+'d ago'}
+function riskColor(s){if(s>=80)return 'var(--rd)';if(s>=60)return 'var(--am)';if(s>=40)return 'var(--bl)';return 'var(--gn)'}
+function statusColor(s){return {pending:'#64748B',assigned:'#3B82F6',under_review:'#8B5CF6',escalated:'#EF4444',approved:'#10B981',removed:'#DC2626',warned:'#F59E0B',restricted:'#F97316',resolved:'#06B6D4',priority:'#F59E0B'}[s]||'#94A3B8'}
+function genCase(manual=false){
+ const cat=CATS[rand(0,CATS.length-1)];
+ const prioWeights=['Critical','High','Medium','Low']; let prio;
+ const rScore=cat==='Benign content'?rand(5,35):cat==='Child safety concerns'||cat==='Self-harm concerns'?rand(70,98):cat==='Threats'?rand(75,95):rand(18,92);
+ if(rScore>=85) prio=Math.random()<.6?'Critical':'High';
+ else if(rScore>=60) prio=Math.random()<.5?'High':'Medium';
+ else if(rScore>=35) prio=Math.random()<.6?'Medium':'Low';
+ else prio='Low';
+ const n=NAMES[rand(0,NAMES.length-1)], uname=USERNAMES[rand(0,USERNAMES.length-1)]+rand(4,99);
+ const texts=CONTENT_TEMPLATES[cat]; const txt=texts[rand(0,texts.length-1)];
+ const now=Date.now()-rand(0, manual?5:480)*60000;
+ const id='TR-'+new Date().getFullYear()+'-'+rand(10000,99999);
+ return {id,contentId:'CNT-'+rand(100000,999999),userId:'USR-'+rand(100000,999999),username:uname,displayName:n[0]+' '+n[1],category:cat,reportReason:REPORT_REASONS[cat],priority:prio,riskScore:rScore,prevReports:rand(0,5),accountAgeMonths:rand(1,72),status:Math.random()<.7?'pending':'assigned',assignedTo:Math.random()<.3?'A. Sharma':null,createdAt:new Date(now).toISOString(),contentText:txt,policyId:POLICIES.find(p=>p.cat===cat)?.id||'POL-000',timeline:[{at:new Date(now).toISOString(),actor:'system',text:'Case ingested • auto-triage '+prio}],notes:[],decision:null,rationale:'',escalationReason:cat==='Child safety concerns'?'Auto-flagged for specialist review':''}
+}
+const POLICIES=[
+ {id:'POL-101',cat:'Harassment',title:'Harassment & Bullying',desc:'Prohibits targeted abuse, repeated unwanted contact, and intimidation.',violations:['Repeated slurs or taunts','Encouraging self-harm','Doxxing'],examples:['Coordinated pile-on','Threat to share private info'],enforce:'Warn → restrict → removal; escalate if stalking',actions:['Remove','Warn','Restrict','Escalate']},
+ {id:'POL-102',cat:'Hate speech',title:'Hate Speech',desc:'Bans dehumanising or slur-based attacks on protected characteristics.',violations:['Slur targeting','Dehumanization','Hate imagery'],examples:['Slur + protected group','Hate symbols'],enforce:'Remove; immediate restriction for severe',actions:['Remove','Restrict','Escalate']},
+ {id:'POL-103',cat:'Spam',title:'Spam & Deceptive Practices',desc:'Prohibits bulk, repetitive or misleading spam.',violations:['Bulk posting','Engagement bait','Link spam'],examples:['Copy-paste across threads','Fake giveaway'],enforce:'Remove + warn; restrict repeat',actions:['Remove','Warn','Restrict']},
+ {id:'POL-104',cat:'Threats',title:'Threats & Violence',desc:'Zero tolerance for credible threats and encouragement of violence.',violations:['Direct threat','Incitement','Graphic gore without filter'],examples:['I will harm you at [location]'],enforce:'Remove + escalate to safety; law-enforcement referral if credible',actions:['Remove','Restrict','Escalate']},
+ {id:'POL-105',cat:'Sexual content',title:'Sexual Content & NCII',desc:'Limits explicit content and prohibits non-consensual imagery.',violations:['Non-consensual imagery','Sexual solicitation of minor','Explicit without label'],examples:['Revenge post','Unsolicited explicit'],enforce:'Remove; restrict; escalate child-related immediately',actions:['Remove','Restrict','Escalate']},
+ {id:'POL-106',cat:'Self-harm concerns',title:'Self-Harm Safe Intervention',desc:'Prioritises welfare, resources, and limited distribution.',violations:['Methods/instructions','Encouragement'],examples:['Detailing method'],enforce:'Limit distribution, provide resources, wellness referral',actions:['Restrict','Escalate','Resolve']},
+ {id:'POL-107',cat:'Child safety concerns',title:'Child Safety',desc:'Absolute prohibition on sexual abuse, grooming, or sexualization of minors.',violations:['Sexualization','Grooming','CSAM'],examples:['Adult-minor solicitation'],enforce:'Remove, restrict, escalate to child safety team immediately',actions:['Remove','Restrict','Escalate']},
+ {id:'POL-108',cat:'Scams',title:'Scams & Impersonation',desc:'Bans fraud and impersonation.',violations:['Phishing','Fake support','Impersonating person/brand'],examples:['Prize scam DM','Fake verified account'],enforce:'Remove + restrict; verify identity',actions:['Remove','Restrict','Escalate']},
+ {id:'POL-109',cat:'Misinformation',title:'Misinformation',desc:'Reduces distribution of verifiably false harmful claims.',violations:['Fabricated health claim','Election falsehood','Doctored media'],examples:['Fake cure','Edited ballot video'],enforce:'Label/restrict; remove if imminent harm',actions:['Remove','Warn','Restrict']},
+];
+function load(){
+ try{const raw=localStorage.getItem(LS_KEY);if(raw){const o=JSON.parse(raw); state.cases=(o.cases||[]).map(c=>({...c})); state.drafts=o.drafts||[]; state.settings=o.settings||state.settings; state.notis=o.notis||[];} }catch{}
+ if(!state.cases.length){ for(let i=0;i<18;i++) state.cases.push(genCase()); save();}
+ scheduleNext();
+}
+function save(){ localStorage.setItem(LS_KEY,JSON.stringify({cases:state.cases,drafts:state.drafts,settings:state.settings,notis:state.notis.slice(0,20)}));}
+function scheduleNext(){
+ if(ingestTimer) clearTimeout(ingestTimer);
+ if(state.livePaused) return;
+ const min=parseFloat(state.settings.minM)*60000, max=parseFloat(state.settings.maxM)*60000;
+ const delay=rand(min,max);
+ nextDeadline=Date.now()+delay;
+ ingestTimer=setTimeout(()=>{genOne();scheduleNext();},delay);
+ startNextTicker();
+}
+function startNextTicker(){
+ if(nextTick) clearInterval(nextTick);
+ nextTick=setInterval(tickNext,1000);
+}
+function tickNext(){
+ if(state.livePaused){document.getElementById('nextIn').textContent='Paused';document.getElementById('nextBar').style.width='0%';return;}
+ const left=Math.max(0,nextDeadline-Date.now());
+ const total=(parseFloat(state.settings.maxM)*60000);
+ let pct= Math.max(4, 100 - (left/total*100));
+ document.getElementById('nextBar').style.width=pct+'%';
+ const m=Math.floor(left/60000), s=Math.floor((left%60000)/1000);
+ document.getElementById('nextIn').textContent=`Next case in ~ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+ document.getElementById('liveTxt').textContent=state.livePaused?'Paused':'Live';
+ document.getElementById('liveDot').style.background=state.livePaused?'var(--am)':'var(--gn)';
+ document.getElementById('liveDot').style.boxShadow=state.livePaused?'0 0 8px var(--am)':'0 0 8px var(--gn)';
+ document.getElementById('pauseBtn').textContent=state.livePaused?'▶ Resume':'⏸ Pause';
+ document.getElementById('pauseBtn2').textContent=state.livePaused?'▶':'⏸';
+}
+function genOne(manual=false){
+ const c=genCase(manual); state.cases.unshift(c);
+ if(!manual) pushNoti('New '+c.category+' case '+c.id+' • '+c.priority,'new',c.id);
+ else pushNoti('Manually generated '+c.id,'info',c.id);
+ toast('New case '+c.id+' — '+c.category);
+ if(state.settings.sound==='on'){ try{ const a=new AudioContext(); const o=a.createOscillator(); const g=a.createGain(); o.connect(g); g.connect(a.destination); o.frequency.value=880; g.gain.value=.06; o.start(); setTimeout(()=>{o.stop();a.close()},180);}catch{}}
+ save(); renderAll();
+}
+function pushNoti(text,type,cid){ state.notis.unshift({text,type,cid,time:new Date().toISOString()}); if(state.notis.length>40) state.notis.pop(); document.getElementById('notiDot').style.display=state.notis.length?'block':'none'; renderNotis(); save();}
+function toast(msg){
+ const s=document.getElementById('toasts'); const el=document.createElement('div'); el.className='toast'; el.innerHTML=`<div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--bl),var(--cy));display:grid;place-items:center;color:#001018;font-weight:800">◈</div><div style="flex:1"><div style="font-weight:800;font-size:12px">${msg}</div><div style="font-size:11px;color:var(--t3)">${new Date().toLocaleTimeString()}</div></div><button class="btn ghost" onclick="this.parentElement.remove()">✕</button>`;
+ s.appendChild(el); setTimeout(()=>el.remove(),4200);
+}
+function nav(v){
+ state.view=v; document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===v));
+ document.querySelectorAll('.view').forEach(e=>e.classList.remove('active'));
+ document.getElementById('v-'+v).classList.add('active');
+ renderAll(); 
+ // charts need layout to settle before measuring parent width
+ setTimeout(()=>{ drawDaily(); drawDonut(); drawTrends(); drawEsc(); }, 60);
+ window.scrollTo(0,0);
+}
+function toggleSide(){ document.getElementById('side').classList.toggle('open');}
+function togglePause(){ state.livePaused=!state.livePaused; if(!state.livePaused) scheduleNext(); else {clearTimeout(ingestTimer); tickNext();} save(); renderMetrics();}
+function toggleNoti(){ document.getElementById('notiPanel').classList.toggle('open');}
+function clearNoti(){ state.notis=[]; renderNotis(); save();}
+function onSearch(v){ state.search=v.toLowerCase(); renderQueue(); renderOverview();}
+function clearFilters(){
+ document.getElementById('fStatus').value='';document.getElementById('fPrio').value='';document.getElementById('fCat').value='';document.getElementById('globalSearch').value='';state.search='';renderQueue();
+}
+function switchTab(t){ state.currentTab=t; document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.t===t)); renderDetail();}
+
+function getFiltered(){
+ let list=[...state.cases];
+ const s=(state.search||'').trim();
+ if(s) list=list.filter(c=>[c.id,c.contentId,c.username,c.displayName,c.category,c.priority,c.status,c.contentText].join(' ').toLowerCase().includes(s));
+ const st=document.getElementById('fStatus')?.value; if(st) list=list.filter(c=>c.status===st);
+ const pr=document.getElementById('fPrio')?.value; if(pr) list=list.filter(c=>c.priority===pr);
+ const cat=document.getElementById('fCat')?.value; if(cat) list=list.filter(c=>c.category===cat);
+ // view filters
+ if(state.view==='assigned') list=list.filter(c=>c.assignedTo==='A. Sharma');
+ if(state.view==='escalations') list=list.filter(c=>c.status==='escalated');
+ if(state.view==='priority') list=list.filter(c=>c.priority==='Critical'||c.priority==='High');
+ const sort=document.getElementById('sortSel')?.value||'newest';
+ if(sort==='priority') list.sort((a,b)=> (PRIO_ORDER[b.priority]-PRIO_ORDER[a.priority])|| new Date(b.createdAt)-new Date(a.createdAt));
+ else if(sort==='risk') list.sort((a,b)=> b.riskScore-a.riskScore);
+ else if(sort==='oldest') list.sort((a,b)=> new Date(a.createdAt)-new Date(b.createdAt));
+ else list.sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+ return list;
+}
+
+function renderAll(){
+ renderMetrics(); renderBadges(); renderQueue(); renderOverview(); renderAssigned(); renderEscalations(); renderPriority(); renderHistory(); renderAnalytics(); renderPolicies(); renderCorrespondenceMeta(); renderNotis(); tickNext();
+}
+function renderBadges(){
+ document.getElementById('bd-all').textContent=state.cases.length;
+ document.getElementById('bd-pend').textContent=state.cases.filter(c=>['pending','assigned','under_review'].includes(c.status)).length;
+ document.getElementById('bd-mine').textContent=state.cases.filter(c=>c.assignedTo==='A. Sharma').length;
+ document.getElementById('bd-esc').textContent=state.cases.filter(c=>c.status==='escalated').length;
+ document.getElementById('bd-pri').textContent=state.cases.filter(c=>c.priority==='Critical'||c.priority==='High').length;
+}
+function renderMetrics(){
+ const total=state.cases.length;
+ const pending=state.cases.filter(c=>['pending','assigned','under_review'].includes(c.status)).length;
+ const today=new Date().toDateString(); const reviewedToday=state.cases.filter(c=>c.decision && new Date(c.decidedAt||c.createdAt).toDateString()===today).length;
+ const escalated=state.cases.filter(c=>c.status==='escalated').length;
+ const high=state.cases.filter(c=>c.priority==='Critical'||c.priority==='High').length;
+ const approved=state.cases.filter(c=>c.decision==='approved').length, removed=state.cases.filter(c=>c.decision==='removed').length;
+ const totalDecided=approved+removed+state.cases.filter(c=>['warned','restricted','resolved'].includes(c.decision)).length||1;
+ const approvalRate=Math.round(approved/totalDecided*100)||0, removalRate=Math.round(removed/totalDecided*100)||0;
+ const avgMin= total? (pending*4 + reviewedToday*7)/Math.max(1,reviewedToday+pending) :0;
+ const workload=Math.min(100, Math.round(pending/12*100));
+ const items=[
+  ['Total Received',total,'+'+rand(2,9)+' today','up'],
+  ['Pending Reviews',pending,pending>10?'Action needed':'On track',pending>10?'down':'up'],
+  ['Reviewed Today',reviewedToday,avgMin.toFixed(1)+' min avg','up'],
+  ['High Priority',high,escalated+' escalated','down'],
+  ['Approval Rate',approvalRate+'%','of decided','up'],
+  ['Removal Rate',removalRate+'%','of decided',''],
+  ['Escalated',escalated,'Requires lead','down'],
+  ['Current Workload',workload+'%','SLA 4h','up'],
+ ];
+ const html=items.map(([k,v,sub,cls])=>`
+  <div class="metric"><div class="m-head">${k}<span class="badge-sm ${cls}">${sub}</span></div><div class="m-val">${v}</div><div class="m-sub">${cls==='up'?'Within tolerance':'Review queue'} • ${fmtTime(new Date())}</div></div>`).join('');
+ document.getElementById('metrics').innerHTML=html;
+ // analytics metrics reuse
+ const am=document.getElementById('analyticsMetrics');
+ if(am) am.innerHTML=items.slice(0,4).map(([k,v,sub])=>`<div class="metric"><div class="m-head">${k}</div><div class="m-val">${v}</div><div class="m-sub">${sub}</div></div>`).join('');
+ drawDaily(); drawDonut(); drawTrends(); drawEsc();
+}
+
+function renderOverview(){
+ const pend=state.cases.filter(c=>['pending','assigned','under_review'].includes(c.status)).slice(0,5);
+ document.getElementById('snapCount').textContent=pend.length+' pending';
+ document.getElementById('snapBody').innerHTML=pend.map(c=>`<tr onclick="selectCase('${c.id}');nav('queue')" style="cursor:pointer"><td><b>${c.id}</b><div style="font-size:10px;color:var(--t3)">${c.username}</div></td><td><span style="color:${CAT_COLOR[c.category]||'var(--t1)'}">●</span> ${c.category}</td><td><span class="prio ${c.priority}">${c.priority}</span></td><td><div style="display:flex;align-items:center;gap:6px"><div class="riskbar"><div class="riskfill" style="width:${c.riskScore}%;background:${riskColor(c.riskScore)}"></div></div>${c.riskScore}</div></td><td>${ageStr(c.createdAt)}</td><td><span style="width:8px;height:8px;border-radius:50%;background:${statusColor(c.status)};display:inline-block"></span> ${c.status}</td></tr>`).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:16px">No pending cases — queue clear</td></tr>`;
+ const act=document.getElementById('activityOverview');
+ act.innerHTML=state.cases.slice(0,6).map(c=>`<div class="tl-item"><div class="tl-dot" style="background:${statusColor(c.status)}"></div><div style="flex:1"><div style="font-size:11px;font-weight:700">${c.id} • ${c.category}</div><div style="font-size:11px;color:var(--t2)">${(c.timeline[c.timeline.length-1]?.text)||'Ingested'} — ${ageStr(c.createdAt)}</div></div></div>`).join('');
+ document.getElementById('miniTrend').textContent='Queue health: '+ (pend.length>8?'Backlog building — consider reassignments':'Stable flow')+' • ingest interval '+state.settings.minM+'–'+state.settings.maxM+' min';
+}
+
+function renderQueue(){
+ const list=getFiltered();
+ document.getElementById('qCount').textContent=list.length+' cases';
+ // categories filter populate once
+ const fc=document.getElementById('fCat');
+ if(fc && fc.options.length<=1){ CATS.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;fc.appendChild(o);});}
+ document.getElementById('qList').innerHTML=list.map(c=>`
+  <div class="case-card ${state.selectedId===c.id?'sel':''}" onclick="selectCase('${c.id}')">
+   <div class="c-top"><span class="c-id">${c.id}</span><span class="prio ${c.priority}">${c.priority.toUpperCase()}</span><span class="risk">RISK ${c.riskScore}<span class="riskbar"><span class="riskfill" style="width:${c.riskScore}%;background:${riskColor(c.riskScore)}"></span></span></span></div>
+   <div class="c-meta"><span>${c.category}</span><span>• ${c.username}</span><span style="margin-left:auto">${ageStr(c.createdAt)}</span></div>
+   <div class="c-text">${escapeHtml(c.contentText)}</div>
+   <div class="c-foot"><span class="dot-s" style="background:${statusColor(c.status)}"></span>${c.status} • ${c.prevReports} prior reports • ${c.accountAgeMonths}mo account <span style="margin-left:auto;color:var(--t3)">${c.contentId}</span></div>
+  </div>`).join('') || `<div style="padding:20px;text-align:center;color:var(--t3)">No cases match filters</div>`;
+ if(!state.selectedId && list[0]) state.selectedId=list[0].id;
+ renderDetail();
+ // attach filter listeners once
+ ['fStatus','fPrio','fCat'].forEach(id=>{const el=document.getElementById(id); if(el && !el._bound){el.addEventListener('change',renderQueue); el._bound=true;}});
+}
+function selectCase(id){ state.selectedId=id; document.querySelectorAll('.case-card').forEach(e=>e.classList.remove('sel')); renderQueue(); if(window.innerWidth<=1100) document.querySelector('.q-right').scrollIntoView({behavior:'smooth'});}
+function renderDetail(){
+ const c=byId(state.selectedId);
+ const wrap=document.getElementById('caseDetail');
+ const bar=document.getElementById('decisionBar');
+ if(!c){ wrap.innerHTML=`<div style="padding:20px;color:var(--t3)">Select a case to investigate. Use J/K to navigate, / to search.</div>`; bar.innerHTML=''; return;}
+ // header
+ let html='';
+ html+=`<div style="display:flex;gap:10px;align-items:start"><div style="flex:1"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b style="font-size:13px">${c.id}</b><span class="prio ${c.priority}">${c.priority}</span><span class="badge-sm">${c.status}</span><span class="badge-sm" style="color:${riskColor(c.riskScore)};border-color:${riskColor(c.riskScore)}">RISK ${c.riskScore}/100</span>
+ <span class="badge-sm">${c.category}</span></div><div style="font-size:11px;color:var(--t3);margin-top:4px">${c.contentId} • ${fmtTime(c.createdAt)} • ${ageStr(c.createdAt)} • Reported for: ${c.reportReason}</div></div><div style="text-align:right"><div style="font-size:11px;color:var(--t3)">Assigned</div><div style="font-weight:800">${c.assignedTo||'Unassigned'}</div></div></div>`;
+
+ if(state.currentTab==='details'){
+  html+=`<div class="quote">“${escapeHtml(c.contentText)}”<div style="margin-top:8px;font-size:11px;color:var(--t3)">Content ID ${c.contentId} • Flagged by ${rand(1,3)===1?'user report':'classifier'} • Confidence ${Math.min(99, c.riskScore+rand(-8,12))}%</div></div>`;
+  html+=`<div class="kv">
+   <div class="kv-item"><div class="kv-k">User</div><div class="kv-v">${escapeHtml(c.displayName)} (@${c.username})<div style="font-size:11px;color:var(--t3)">${c.userId} • ${c.accountAgeMonths} months • ${rand(12,4200)} followers</div></div></div>
+   <div class="kv-item"><div class="kv-k">Report context</div><div class="kv-v">${c.prevReports} prior reports • ${c.priority} priority<div style="font-size:11px;color:var(--t3)">Policy: ${c.policyId} • ${c.category}</div></div></div>
+   <div class="kv-item"><div class="kv-k">Risk assessment</div><div class="kv-v"><div class="riskbar" style="width:100%;height:8px"><div class="riskfill" style="width:${c.riskScore}%;background:${riskColor(c.riskScore)}"></div></div><div style="font-size:11px;color:var(--t3);margin-top:4px">${c.riskScore>=80?'Immediate review advised':c.riskScore>=60?'Monitor closely':'Standard queue'}</div></div></div>
+   <div class="kv-item"><div class="kv-k">Policy reference</div><div class="kv-v">${c.policyId} • <a href="#" onclick="openPolicy('${c.policyId}');return false;" style="color:var(--cy)">View policy</a><div style="font-size:11px;color:var(--t3)">${POLICIES.find(p=>p.id===c.policyId)?.title||''}</div></div></div>
+  </div>`;
+  html+=`<div class="kv-item"><div class="kv-k">Previous moderation actions</div><div class="kv-v" style="font-size:12px;color:var(--t2)">${c.prevReports?`Prior warnings: ${Math.min(c.prevReports,2)} • Last action ${rand(2,40)} days ago`: 'No prior actions on record'}</div></div>`;
+  html+=`<div class="kv-item"><div class="kv-k">Reviewer notes</div><div class="kv-v" style="min-height:22px">${c.notes.length? c.notes.map(n=>`<div style="border-left:2px solid var(--bd2);padding:4px 8px;margin:6px 0;background:rgba(255,255,255,.03);border-radius:6px"><b style="font-size:11px">${n.author}</b> <span style="font-size:11px;color:var(--t3)">${fmtTime(n.at)}</span><div style="font-size:12px">${escapeHtml(n.text)}</div></div>`).join(''): '<span style="color:var(--t3)">No notes yet</span>'}<div style="display:flex;gap:8px;margin-top:8px"><input id="noteInput" class="input" placeholder="Add internal note…"><button class="btn primary" onclick="addNote()">Add</button></div></div></div>`;
+ } else if(state.currentTab==='meta'){
+  html+=`<div class="kv"><div class="kv-item"><div class="kv-k">Content ID</div><div class="kv-v">${c.contentId}</div></div><div class="kv-item"><div class="kv-k">User ID</div><div class="kv-v">${c.userId}</div></div><div class="kv-item"><div class="kv-k">Username</div><div class="kv-v">@${c.username}</div></div><div class="kv-item"><div class="kv-k">Account age</div><div class="kv-v">${c.accountAgeMonths} months</div></div><div class="kv-item"><div class="kv-k">Previous reports</div><div class="kv-v">${c.prevReports}</div></div><div class="kv-item"><div class="kv-k">Submission</div><div class="kv-v">${fmtTime(c.createdAt)}</div></div><div class="kv-item"><div class="kv-k">Report reason</div><div class="kv-v">${c.reportReason}</div></div><div class="kv-item"><div class="kv-k">Risk score</div><div class="kv-v">${c.riskScore}</div></div></div>
+   <div class="kv-item"><div class="kv-k">Raw content</div><div class="kv-v" style="white-space:pre-wrap">${escapeHtml(c.contentText)}</div></div>`;
+ } else if(state.currentTab==='timeline'){
+  html+=`<div class="timeline">${c.timeline.slice().reverse().map(t=>`<div class="tl-item"><div class="tl-dot"></div><div style="flex:1"><div style="font-size:12px;font-weight:700">${t.actor} — ${t.text}</div><div style="font-size:11px;color:var(--t3)">${fmtTime(t.at)}</div></div></div>`).join('')}</div>`;
+ } else if(state.currentTab==='notes'){
+  html+=`<div class="kv-item"><div class="kv-k">Internal notes</div><div class="kv-v">${c.notes.length? c.notes.map(n=>`<div style="padding:8px;border:1px solid var(--bd);border-radius:8px;margin:6px 0;background:var(--b1)"><b>${n.author}</b> <span style="color:var(--t3);font-size:11px">${fmtTime(n.at)}</span><div>${escapeHtml(n.text)}</div></div>`).join(''): 'No notes'}<div style="display:flex;gap:8px;margin-top:10px"><textarea id="noteInput2" class="input" placeholder="Write note…"></textarea><button class="btn primary" onclick="addNote2()">Save</button></div></div></div>`;
+  if(c.decision) html+=`<div class="kv-item"><div class="kv-k">Decision history</div><div class="kv-v">Decision: <b>${c.decision}</b> by ${c.decidedBy||'—'}<div style="font-size:11px;color:var(--t3)">Rationale: ${escapeHtml(c.rationale||'—')}</div></div></div>`;
+ }
+ wrap.innerHTML=html;
+
+ // decision bar
+ bar.innerHTML=`
+  <button class="btn ghost" onclick="assignMe()">${c.assignedTo==='A. Sharma'?'✓ Assigned':'Assign to me'}</button>
+  <button class="btn" onclick="openMarkPrio()">◆ Priority</button>
+  <button class="btn success" onclick="doDecision('approved')">✓ Approve</button>
+  <button class="btn danger" onclick="confirmRemove()">✕ Remove</button>
+  <button class="btn warn" onclick="doDecision('warned')">⚠ Warn</button>
+  <button class="btn" style="background:#1F1150;border-color:#4C1D95" onclick="doDecision('restricted')">⛔ Restrict</button>
+  <button class="btn" style="background:#3F0E1E;border-color:#7C2D12" onclick="openEscalate()">⚑ Escalate</button>
+  <button class="btn ghost" onclick="doDecision('resolved')">Resolve</button>
+  <div style="margin-left:auto;display:flex;gap:6px"><button class="btn ghost" onclick="reassign()">Reassign</button><button class="btn ghost" onclick="requestReview()">Request review</button></div>`;
+}
+
+function addNote(){
+ const el=document.getElementById('noteInput')||document.getElementById('noteInput2'); if(!el||!el.value.trim()) return;
+ const c=byId(state.selectedId); c.notes.push({author:'A. Sharma',at:new Date().toISOString(),text:el.value.trim()}); c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Added note'}); pushNoti('Note added to '+c.id,'info',c.id); save(); renderAll();
+}
+function addNote2(){ const el=document.getElementById('noteInput2'); if(!el) return; // reuse
+ const c=byId(state.selectedId); if(!el.value.trim()) return; c.notes.push({author:'A. Sharma',at:new Date().toISOString(),text:el.value.trim()}); c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Added note'}); save(); renderAll();
+}
+
+function assignMe(){ const c=byId(state.selectedId); if(!c) return; c.assignedTo='A. Sharma'; c.status='assigned'; c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Assigned to self'}); pushNoti('Assigned '+c.id+' to you','info',c.id); save(); renderAll();}
+function reassign(){ openModal('Reassign case',`<label class="label">Assign to</label><select id="reassignTo" class="input"><option>Unassigned</option><option>J. Patel — Safety Lead</option><option>M. Chen — Child Safety</option><option>R. Alvarez — Escalations</option><option>A. Sharma</option></select>`,[{label:'Cancel',action:closeModal},{label:'Reassign',primary:true,action:()=>{
+ const v=document.getElementById('reassignTo').value; const c=byId(state.selectedId); c.assignedTo=v==='Unassigned'?null:v; c.status=v==='Unassigned'?'pending':'assigned'; c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Reassigned to '+v}); save(); renderAll(); closeModal(); pushNoti('Reassigned '+c.id,'info',c.id);
+}}]);}
+function openMarkPrio(){ const c=byId(state.selectedId); if(!c) return; c.priority=c.priority==='Critical'?'High':'Critical'; c.status='priority'; c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Marked priority '+c.priority}); save(); renderAll(); toast('Priority set to '+c.priority);}
+function confirmRemove(){
+ openModal('Remove content — confirmation',`<div style="font-size:12px;color:var(--t2);line-height:1.6">This will mark the content as removed and may restrict the account if policy requires. Provide rationale:</div><label class="label">Rationale (required)</label><textarea id="rationale" placeholder="Explain policy violation and evidence…"></textarea><label class="label"><input type="checkbox" id="restrictAlso"> Also restrict account</label>`,[{label:'Cancel',action:closeModal},{label:'Remove content',danger:true,action:()=>{
+  const r=document.getElementById('rationale').value.trim(); if(!r) return alert('Rationale required'); const c=byId(state.selectedId); c.decision='removed'; c.status='removed'; c.rationale=r; c.decidedAt=new Date().toISOString(); c.decidedBy='A. Sharma'; c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Decision: Removed • '+r.slice(0,60)}); if(document.getElementById('restrictAlso').checked) c.decision='restricted';
+  pushNoti('Removed '+c.id,'danger',c.id); save(); renderAll(); closeModal(); toast('Content removed — '+c.id);
+}}]);
+}
+function doDecision(dec){
+ const needsRationale=['removed','restricted','warned','escalated'].includes(dec);
+ if(needsRationale){
+  openModal('Decision rationale — '+dec,`<label class="label">Rationale (required)</label><textarea id="rationale2" placeholder="Provide reasoning per policy…"></textarea>`,[{label:'Cancel',action:closeModal},{label:'Confirm '+dec,primary:true,action:()=>{
+   const r=document.getElementById('rationale2').value.trim(); if(!r) return alert('Rationale required'); applyDecision(dec,r);
+  }}]);
+ } else applyDecision(dec,'');
+}
+function applyDecision(dec,rationale){
+ const c=byId(state.selectedId); if(!c) return;
+ c.decision=dec; c.rationale=rationale||''; c.decidedAt=new Date().toISOString(); c.decidedBy='A. Sharma';
+ const map={approved:'approved',removed:'removed',warned:'warned',restricted:'restricted',escalated:'escalated',resolved:'resolved'};
+ c.status=map[dec]||'resolved';
+ c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Decision: '+dec+(rationale?' — '+rationale.slice(0,50):'')});
+ pushNoti('Decision '+dec+' on '+c.id,'success',c.id); save(); renderAll(); closeModal(); toast('Decision recorded: '+dec);
+}
+function openEscalate(){
+ openModal('Escalate case',`<label class="label">Escalation reason</label><select id="escReason" class="input"><option>Child safety specialist</option><option>Legal review</option><option>Threat assessment</option><option>Policy ambiguity</option><option>High-profile account</option></select><label class="label">Details</label><textarea id="escDetail" placeholder="Add context…"></textarea>`,[{label:'Cancel',action:closeModal},{label:'Escalate',danger:true,action:()=>{
+  const r=document.getElementById('escReason').value; const d=document.getElementById('escDetail').value.trim();
+  const c=byId(state.selectedId); c.status='escalated'; c.decision='escalated'; c.escalationReason=r; c.rationale=d; c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Escalated: '+r}); pushNoti('Escalated '+c.id+' • '+r,'danger',c.id); save(); renderAll(); closeModal();
+}}]);
+}
+function requestReview(){ const c=byId(state.selectedId); c.status='under_review'; c.timeline.push({at:new Date().toISOString(),actor:'A. Sharma',text:'Requested further review'}); pushNoti('Review requested for '+c.id,'info',c.id); save(); renderAll(); toast('Further review requested');}
+function openPolicyForCase(){ const c=byId(state.selectedId); if(c) openPolicy(c.policyId); else nav('policy');}
+function copyCase(){ const c=byId(state.selectedId); if(!c) return; const txt=`${c.id} | ${c.category} | ${c.priority} | Risk ${c.riskScore}\nUser: ${c.username} (${c.userId})\nContent: ${c.contentText}\nPolicy: ${c.policyId}`; navigator.clipboard.writeText(txt); toast('Case copied');}
+function openModal(title,body,foot){
+ document.getElementById('modalTitle').textContent=title;
+ document.getElementById('modalBody').innerHTML=body;
+ const f=document.getElementById('modalFoot'); f.innerHTML='';
+ foot.forEach(b=>{
+  const btn=document.createElement('button'); btn.className='btn '+(b.primary?'primary':b.danger?'danger':'ghost'); btn.textContent=b.label; btn.onclick=b.action; f.appendChild(btn);
+ });
+ document.getElementById('modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('open');}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+function renderAssigned(){
+ const list=state.cases.filter(c=>c.assignedTo==='A. Sharma');
+ document.getElementById('assignedCount').textContent=list.length+' cases';
+ document.getElementById('assignedBody').innerHTML=list.map(c=>`<tr><td><b>${c.id}</b></td><td>@${c.username}</td><td>${c.category}</td><td><span class="prio ${c.priority}">${c.priority}</span></td><td>${c.riskScore}</td><td><span class="badge-sm">${c.status}</span></td><td><button class="btn ghost" onclick="selectCase('${c.id}');nav('queue')">Open</button></td></tr>`).join('')||`<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:16px">No assigned cases</td></tr>`;
+}
+function renderEscalations(){
+ const list=state.cases.filter(c=>c.status==='escalated');
+ document.getElementById('escCount').textContent=list.length+' escalated';
+ document.getElementById('escBody').innerHTML=list.map(c=>`<tr><td><b>${c.id}</b><div style="font-size:10px;color:var(--t3)">${ageStr(c.createdAt)}</div></td><td>${c.category}</td><td>${c.escalationReason||'—'}</td><td><span class="prio ${c.priority}">${c.priority}</span></td><td>${ageStr(c.createdAt)}</td><td>${c.assignedTo||'—'}</td><td><button class="btn ghost" onclick="selectCase('${c.id}');nav('queue')">Review</button></td></tr>`).join('')||`<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:16px">No escalations</td></tr>`;
+}
+function renderPriority(){
+ const list=state.cases.filter(c=>c.priority==='Critical'||c.priority==='High').slice(0,9);
+ document.getElementById('priCount').textContent=list.length+' high priority';
+ document.getElementById('priGrid').innerHTML=list.map(c=>`<div class="panel"><div class="p-head">${c.id}<span class="prio ${c.priority}" style="margin-left:auto">${c.priority}</span></div><div class="p-body"><div style="font-size:12px;color:var(--t1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${escapeHtml(c.contentText)}</div><div style="margin-top:8px;font-size:11px;color:var(--t3)">${c.category} • ${c.username} • R${c.riskScore}</div><button class="btn primary" style="margin-top:8px;width:100%" onclick="selectCase('${c.id}');nav('queue')">Investigate →</button></div></div>`).join('')||`<div style="color:var(--t3)">No priority cases</div>`;
+}
+function renderHistory(){
+ const q=(document.getElementById('histSearch')?.value||'').toLowerCase(); const f=document.getElementById('histFilter')?.value||'';
+ let list=state.cases.filter(c=>c.decision);
+ if(f) list=list.filter(c=>c.decision===f);
+ if(q) list=list.filter(c=>[c.id,c.category,c.decision,c.rationale,c.username].join(' ').toLowerCase().includes(q));
+ list=list.slice(0,100);
+ document.getElementById('histBody').innerHTML=list.map(c=>`<tr><td>${fmtTime(c.decidedAt)}</td><td><b>${c.id}</b><div style="font-size:10px;color:var(--t3)">${c.contentId}</div></td><td>${c.category}</td><td><span class="badge-sm" style="background:var(--b2)">${c.decision}</span></td><td style="max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.rationale||'—')}</td><td>${c.decidedBy||'—'}</td></tr>`).join('')||`<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:16px">No decisions yet — process cases in Review Queue</td></tr>`;
+}
+function renderAnalytics(){
+ // perf table
+ const total=state.cases.length, decided=state.cases.filter(c=>c.decision).length;
+ const avgRisk=Math.round(state.cases.reduce((s,c)=>s+c.riskScore,0)/Math.max(1,total));
+ const esc=state.cases.filter(c=>c.status==='escalated').length;
+ document.getElementById('perfBody').innerHTML=[
+  ['Total cases in store',total,'Synthetic records'],
+  ['Decided',decided,decided?Math.round(decided/total*100)+'% of total':'—'],
+  ['Avg risk score',avgRisk,'Across all cases'],
+  ['Escalation rate', esc+' ('+Math.round(esc/Math.max(1,total)*100)+'%)','Requires specialist'],
+  ['Avg handling (est.)','~6.4 min','Calculated locally'],
+  ['Queue health','Stable','Ingest '+state.settings.minM+'–'+state.settings.maxM+' min'],
+ ].map(([k,v,n])=>`<tr><td><b>${k}</b></td><td>${v}</td><td style="color:var(--t3)">${n}</td></tr>`).join('');
+}
+function renderPolicies(){
+ const q=(document.getElementById('policySearch')?.value||'').toLowerCase();
+ let list=POLICIES; if(q) list=list.filter(p=>[p.id,p.title,p.desc,p.cat].join(' ').toLowerCase().includes(q));
+ document.getElementById('policyGrid').innerHTML=list.map(p=>`
+  <div class="panel" style="cursor:pointer" onclick="openPolicy('${p.id}')">
+   <div class="p-head"><span style="color:${CAT_COLOR[p.cat]||'var(--t1)'}">●</span> ${p.title}<span class="badge-sm" style="margin-left:auto">${p.id}</span></div>
+   <div class="p-body"><div style="font-size:12px;color:var(--t2)">${p.desc}</div><div style="margin-top:8px;font-size:11px;color:var(--t3)">Enforcement: ${p.enforce.slice(0,70)}…</div></div>
+  </div>`).join('');
+}
+function openPolicy(id){
+ const p=POLICIES.find(x=>x.id===id); if(!p) return;
+ const el=document.getElementById('policyDetail'); el.style.display='block';
+ el.innerHTML=`<div class="p-head">${p.title} <span class="badge-sm">${p.id}</span><button class="btn ghost" style="margin-left:auto" onclick="document.getElementById('policyDetail').style.display='none'">Close</button></div><div class="p-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <div><div style="font-weight:800">Description</div><div style="font-size:12px;color:var(--t2);margin-top:4px">${p.desc}</div><div style="margin-top:10px;font-weight:800">Violations</div><ul style="margin:6px 0 0 16px;font-size:12px;color:var(--t2)">${p.violations.map(v=>`<li>${v}</li>`).join('')}</ul></div>
+  <div><div style="font-weight:800">Examples</div><ul style="margin:6px 0 0 16px;font-size:12px;color:var(--t2)">${p.examples.map(v=>`<li>${v}</li>`).join('')}</ul><div style="margin-top:10px;font-weight:800">Enforcement guidance</div><div style="font-size:12px;color:var(--t2)">${p.enforce}</div><div style="margin-top:10px;font-weight:800">Possible actions</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${p.actions.map(a=>`<span class="badge-sm">${a}</span>`).join('')}</div></div>
+ </div>`;
+ nav('policy'); setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),100);
+}
+function renderNotis(){
+ const el=document.getElementById('notiList');
+ if(!state.notis.length) el.innerHTML=`<div style="padding:16px;text-align:center;color:var(--t3);font-size:12px">No notifications</div>`;
+ else el.innerHTML=state.notis.map(n=>`<div style="padding:10px 12px;border-bottom:1px solid var(--bd);display:flex;gap:10px;cursor:pointer" onclick="selectCase('${n.cid}');toggleNoti();nav('queue')"><div style="width:8px;height:8px;border-radius:50%;background:${n.type==='danger'?'var(--rd)':n.type==='success'?'var(--gn)':'var(--bl)'};margin-top:6px"></div><div style="flex:1"><div style="font-size:12px;font-weight:700">${n.text}</div><div style="font-size:11px;color:var(--t3)">${fmtTime(n.time)}</div></div></div>`).join('');
+ document.getElementById('notiDot').style.display=state.notis.length?'block':'none';
+}
+function renderCorrespondenceMeta(){
+ const sel=document.getElementById('mailCase');
+ if(!sel) return;
+ const cur=sel.value;
+ sel.innerHTML=state.cases.slice(0,40).map(c=>`<option value="${c.id}" ${c.id===cur?'selected':''}>${c.id} — ${c.category} (${c.priority})</option>`).join('');
+ if(!cur && state.cases[0]) sel.value=state.cases[0].id;
+ genMail();
+ const d=document.getElementById('drafts');
+ d.innerHTML=state.drafts.length? `<div style="font-size:11px;color:var(--t3);margin-top:8px">Drafts (${state.drafts.length})</div>`+state.drafts.slice(0,5).map((x,i)=>`<div style="padding:8px;border:1px solid var(--bd);border-radius:8px;margin-top:6px;background:var(--b1)"><b style="font-size:11px">${escapeHtml(x.subject)}</b><div style="font-size:11px;color:var(--t3)">${fmtTime(x.at)} • ${x.to}</div><button class="btn ghost" style="margin-top:6px" onclick="loadDraft(${i})">Load</button></div>`).join('') : `<div style="font-size:11px;color:var(--t3)">No drafts</div>`;
+}
+function genMail(){
+ const id=document.getElementById('mailCase')?.value; const tpl=document.getElementById('mailTpl')?.value;
+ const c=byId(id)||state.cases[0]; if(!c) return;
+ let to='safety-ops@internal', subj='', body='';
+ if(tpl==='review'){ to='safety-ops@internal'; subj=`[Review] ${c.id} — ${c.category} / ${c.priority}`; body=`Hello Safety team,\n\nRequesting review for case ${c.id} (Content ${c.contentId}).\nUser: @${c.username} (${c.userId}) — account age ${c.accountAgeMonths} months, ${c.prevReports} prior reports.\nCategory: ${c.category} — ${c.reportReason}\nRisk score: ${c.riskScore} (${c.priority})\n\nContent:\n"${c.contentText}"\n\nPolicy reference: ${c.policyId}\nCurrent status: ${c.status}\nAssigned to: ${c.assignedTo||'Unassigned'}\n\nPlease advise on enforcement.\n\n— A. Sharma\nTrust Operations Desk`;}
+ if(tpl==='escalation'){ to='escalations@internal'; subj=`[Escalation] ${c.id} — ${c.escalationReason||c.category}`; body=`Escalation Team,\n\nCase ${c.id} requires specialist handling.\nReason: ${c.escalationReason||'Policy ambiguity / high risk'}\nCategory: ${c.category}\nPriority: ${c.priority} • Risk ${c.riskScore}\n\nContent excerpt:\n"${c.contentText}"\n\nTimeline: ${c.timeline[c.timeline.length-1]?.text}\nPolicy: ${c.policyId}\n\n— A. Sharma`;}
+ if(tpl==='appeal'){ to=c.username+'@example.user'; subj=`Re: Appeal ${c.id}`; body=`Hello @${c.username},\n\nWe reviewed your appeal for ${c.id} under ${c.category}. After assessment per ${c.policyId}, our decision is: ${c.decision||'under review'}.\n\nIf you have additional context, reply to this thread.\n\nTrust Operations Desk`;}
+ if(tpl==='warning'){ to=c.username+'@example.user'; subj=`Notice regarding your content ${c.contentId}`; body=`Hello @${c.username},\n\nYour content was flagged under our ${c.category} policy (${c.policyId}). Please review community guidelines to avoid further action.\n\n— Trust Operations Desk`;}
+ document.getElementById('mailTo').value=to; document.getElementById('mailSub').value=subj; document.getElementById('mailBody').value=body;
+ document.getElementById('mailPrev').textContent=`To: ${to}\nSubject: ${subj}\n\n${body}`;
+}
+function saveDraft(){ const to=document.getElementById('mailTo').value, sub=document.getElementById('mailSub').value, body=document.getElementById('mailBody').value; if(!sub||!body) return alert('Subject/body required'); state.drafts.unshift({to,subject:sub,body,at:new Date().toISOString()}); save(); renderCorrespondenceMeta(); toast('Draft saved');}
+function copyMail(){ const t=`To: ${document.getElementById('mailTo').value}\nSubject: ${document.getElementById('mailSub').value}\n\n${document.getElementById('mailBody').value}`; navigator.clipboard.writeText(t); toast('Email copied');}
+function openMail(){ const to=document.getElementById('mailTo').value, sub=encodeURIComponent(document.getElementById('mailSub').value), body=encodeURIComponent(document.getElementById('mailBody').value); window.location.href=`mailto:${to}?subject=${sub}&body=${body}`;}
+function loadDraft(i){ const d=state.drafts[i]; document.getElementById('mailTo').value=d.to; document.getElementById('mailSub').value=d.subject; document.getElementById('mailBody').value=d.body; document.getElementById('mailPrev').textContent=d.body;}
+
+/* === FIXED CHARTS — robust rendering === */
+function prepCanvas(id, h){
+ const c=document.getElementById(id); if(!c) return null;
+ const parent=c.parentElement; const w=Math.max(240, parent.clientWidth||c.offsetWidth||360);
+ const dpr=Math.min(2, window.devicePixelRatio||1);
+ c.width=w*dpr; c.height=h*dpr; c.style.width=w+'px'; c.style.height=h+'px';
+ const ctx=c.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,w,h);
+ return {c, ctx, w, h};
+}
+function drawDaily(){
+ const p=prepCanvas('cDaily',160); if(!p) return; const {ctx,w,h}=p;
+ const vals=[5,8,6,9,7,11, Math.min(12, (state.cases.length%12)+4)]; const labels=['Mon','Tue','Wed','Thu','Fri','Sat','Today']; const max=12; const padL=28, padR=12; const chartW=w-padL-padR, chartH=105; const gap=8; const barW=(chartW - gap*(vals.length-1))/vals.length;
+ ctx.fillStyle='rgba(255,255,255,.06)'; ctx.fillRect(padL,18,w-padL-padR,chartH);
+ // grid lines
+ ctx.strokeStyle='rgba(255,255,255,.07)'; ctx.lineWidth=1; for(let i=0;i<=4;i++){ const y=18+ chartH - i/4*chartH; ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke(); ctx.fillStyle='#67789B'; ctx.font='10px Inter'; ctx.textAlign='right'; ctx.fillText(String(Math.round(i/4*max)), padL-6, y+3); }
+ vals.forEach((v,i)=>{
+  const x=padL+i*(barW+gap); const bh=v/max*chartH; const y=18+chartH - bh;
+  const grad=ctx.createLinearGradient(0,y,0,y+bh); grad.addColorStop(0,'#2EC4E6'); grad.addColorStop(1,'#3B82F6'); ctx.fillStyle=grad;
+  ctx.beginPath(); if(ctx.roundRect) {ctx.roundRect(x,y,barW,bh,6); ctx.fill();} else {ctx.fillRect(x,y,barW,bh);}
+  ctx.fillStyle='#E8EEF9'; ctx.font='700 11px Inter'; ctx.textAlign='center'; ctx.fillText(String(v), x+barW/2, y-6);
+  ctx.fillStyle='#92A0BD'; ctx.font='10px Inter'; ctx.fillText(labels[i], x+barW/2, 18+chartH+14);
+ });
+ ctx.fillStyle='#67789B'; ctx.font='10px Inter'; ctx.textAlign='left'; ctx.fillText('Reviews per day', padL, 12);
+}
+function drawDonut(){
+ const p=prepCanvas('cDonut',160); if(!p) return; const {ctx,w,h}=p;
+ const counts={}; state.cases.forEach(x=>counts[x.category]=(counts[x.category]||0)+1);
+ let entries=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+ if(!entries.length){ ctx.fillStyle='#67789B'; ctx.font='12px Inter'; ctx.textAlign='center'; ctx.fillText('No data', w/2, h/2); return; }
+ const total=entries.reduce((s,[,v])=>s+v,0);
+ // reserve right side for legend when enough width
+ const cx=w*0.36, cy=78, r=Math.min(62, w*0.16), ir=r*0.58;
+ let a=-Math.PI/2;
+ entries.forEach(([k,v])=>{
+  const ang=v/total*Math.PI*2*0.999; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,r,a,a+ang); ctx.closePath(); ctx.fillStyle=CAT_COLOR[k]||'#3B82F6'; ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=1; ctx.stroke(); a+=ang;
+ });
+ ctx.beginPath(); ctx.arc(cx,cy,ir,0,Math.PI*2); ctx.fillStyle='#0F1B33'; ctx.fill(); ctx.strokeStyle='rgba(29,46,79,.8)'; ctx.stroke();
+ ctx.fillStyle='#E8EEF9'; ctx.font='800 12px Inter'; ctx.textAlign='center'; ctx.fillText(total+' cases', cx, cy+1);
+ ctx.fillStyle='#92A0BD'; ctx.font='10px Inter'; ctx.fillText('total', cx, cy+12);
+ // legend on right — two columns if needed
+ ctx.textAlign='left'; ctx.font='11px Inter';
+ let lx=w*0.62, ly=18; const colW=w*0.34;
+ entries.forEach(([k,v])=>{
+  if(ly>h-12){ lx+=colW; ly=18; }
+  ctx.fillStyle=CAT_COLOR[k]||'#fff'; ctx.fillRect(lx, ly, 10,10);
+  ctx.fillStyle='#E8EEF9'; const label=k.length>18?k.slice(0,18)+'…':k;
+  ctx.fillText(label+'  '+v, lx+14, ly+9); ly+=16;
+ });
+}
+function drawTrends(){
+ const p=prepCanvas('cTrends',170); if(!p) return; const {ctx,w}=p;
+ const pad=36, chartW=w-pad-10, chartH=110, top=20;
+ ctx.fillStyle='rgba(255,255,255,.04)'; ctx.fillRect(pad,top,chartW,chartH);
+ ctx.strokeStyle='rgba(255,255,255,.07)'; for(let i=0;i<=3;i++){ const y=top+ i/3*chartH; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-10,y); ctx.stroke(); }
+ const pts=Array.from({length:14},(_,i)=> 6+ Math.floor(5+Math.random()*5 + Math.sin(i/1.1)*2.5));
+ const max=14; ctx.strokeStyle='#22D3EE'; ctx.lineWidth=2; ctx.beginPath();
+ pts.forEach((v,i)=>{ const x=pad+i*(chartW/13), y=top+chartH - v/max*chartH; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); });
+ ctx.stroke();
+ ctx.lineTo(pad+chartW, top+chartH); ctx.lineTo(pad, top+chartH); ctx.closePath(); ctx.fillStyle='rgba(34,211,238,.14)'; ctx.fill();
+ ctx.fillStyle='#92A0BD'; ctx.font='10px Inter'; ctx.textAlign='left'; ctx.fillText('Queue depth (synthetic 14d)', pad, 12);
+}
+function drawEsc(){
+ const p=prepCanvas('cEsc',170); if(!p) return; const {ctx,w}=p;
+ const pad=36, chartW=w-pad-10, chartH=110, top=20; const vals=[1,2,1,3,2,4,3]; const max=5;
+ ctx.fillStyle='rgba(255,255,255,.04)'; ctx.fillRect(pad,top,chartW,chartH);
+ ctx.strokeStyle='rgba(255,255,255,.07)'; for(let i=0;i<=3;i++){ const y=top+i/3*chartH; ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(w-10,y); ctx.stroke();}
+ const barGap= (chartW - vals.length*18)/Math.max(1,vals.length-1);
+ vals.forEach((v,i)=>{ const x=pad+i*(18+barGap), bh=v/max*chartH, y=top+chartH - bh; ctx.fillStyle=v>=4?'#EF4444':'#F59E0B'; if(ctx.roundRect){ctx.beginPath(); ctx.roundRect(x,y,18,bh,4); ctx.fill();} else ctx.fillRect(x,y,18,bh); ctx.fillStyle='#E8EEF9'; ctx.font='700 10px Inter'; ctx.textAlign='center'; ctx.fillText(String(v), x+9, y-5); ctx.fillStyle='#92A0BD'; ctx.font='10px Inter'; ctx.fillText('D'+(i+1), x+9, top+chartH+14);});
+ ctx.fillStyle='#92A0BD'; ctx.font='10px Inter'; ctx.textAlign='left'; ctx.fillText('Escalations / day', pad, 12);
+}
+
+// helpers
+function exportCSV(){
+ const rows=[['Case ID','Content ID','User','Category','Priority','Risk','Status','Decision','Assigned','Created']];
+ state.cases.forEach(c=>rows.push([c.id,c.contentId,c.username,c.category,c.priority,c.riskScore,c.status,c.decision||'',c.assignedTo||'',c.createdAt]));
+ const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+ const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='trust-ops-cases-'+new Date().toISOString().slice(0,10)+'.csv'; a.click();
+ toast('CSV exported');
+}
+function resetData(){ if(!confirm('Reset all local data? This clears cases, drafts and settings.')) return; localStorage.removeItem(LS_KEY); state.cases=[]; state.drafts=[]; state.notis=[]; for(let i=0;i<16;i++) state.cases.push(genCase()); save(); renderAll(); toast('Data reset');}
+function seedMore(){ for(let i=0;i<10;i++) state.cases.unshift(genCase(true)); save(); renderAll(); toast('10 cases generated');}
+function saveNow(){ save(); toast('Saved');}
+function saveSettings(){ state.settings.minM=parseFloat(document.getElementById('setMin').value)||3; state.settings.maxM=parseFloat(document.getElementById('setMax').value)||8; state.settings.opName=document.getElementById('setName').value; state.settings.sound=document.getElementById('setSound').value; save(); scheduleNext(); toast('Settings saved'); renderMetrics();}
+function resetCharts(){ renderMetrics(); toast('Analytics refreshed');}
+
+// init
+load();
+renderAll();
+setTimeout(()=>{ drawDaily(); drawDonut(); drawTrends(); drawEsc(); }, 120);
+window.addEventListener('resize', ()=>{ drawDaily(); drawDonut(); drawTrends(); drawEsc(); });
+document.addEventListener('DOMContentLoaded',()=>{ // attach settings values
+ try{ document.getElementById('setMin').value=state.settings.minM; document.getElementById('setMax').value=state.settings.maxM; document.getElementById('setName').value=state.settings.opName; document.getElementById('setSound').value=state.settings.sound; }catch{}
+});
+setInterval(()=>{ const el=document.getElementById('clock'); if(el) el.textContent=new Date().toLocaleString('en-GB',{weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+document.addEventListener('keydown',e=>{
+ if(e.key==='/' && document.activeElement.tagName!=='INPUT' && document.activeElement.tagName!=='TEXTAREA'){ e.preventDefault(); document.getElementById('globalSearch').focus();}
+ if(document.activeElement.tagName==='INPUT'||document.activeElement.tagName==='TEXTAREA'||document.activeElement.tagName==='SELECT') return;
+ if(e.key.toLowerCase()==='j'){ const list=getFiltered(); const i=list.findIndex(c=>c.id===state.selectedId); if(i<list.length-1) selectCase(list[i+1].id);}
+ if(e.key.toLowerCase()==='k'){ const list=getFiltered(); const i=list.findIndex(c=>c.id===state.selectedId); if(i>0) selectCase(list[i-1].id);}
+ if(e.key.toLowerCase()==='a') doDecision('approved');
+ if(e.key.toLowerCase()==='r') confirmRemove();
+ if(e.key.toLowerCase()==='e') openEscalate();
+ if(e.key.toLowerCase()==='n') { state.currentTab='notes'; renderDetail(); setTimeout(()=>document.getElementById('noteInput2')?.focus(),100);}
+ if(e.key.toLowerCase()==='p') togglePause();
+});
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal();});
+</script>
+</body>
+</html>
